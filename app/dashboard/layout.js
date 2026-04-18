@@ -27,24 +27,37 @@ export default function DashboardLayout({ children }) {
   // Fetch true role and onboarding status
   useEffect(() => {
     async function syncUserData() {
-      if (user?.uid) {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          if (!data.onboardingComplete) {
-             router.push("/onboarding");
-          } else {
-             setSyncedRole(data.role || "tourist");
-          }
+      if (user?.uid === "mock-123") {
+        if (!localStorage.getItem("MOCK_ONBOARDED")) {
+           router.push("/onboarding");
         } else {
-          // Initialize empty profile
-          await setDoc(doc(db, "users", user.uid), {
-            name: user.displayName || "User",
-            email: user.email,
-            role: role || "tourist",
-            onboardingComplete: false
-          });
-          router.push("/onboarding");
+           setSyncedRole(localStorage.getItem("MOCK_DEV_ROLE") || "tourist");
+        }
+        return;
+      }
+
+      if (user?.uid) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            if (!data.onboardingComplete) {
+               router.push("/onboarding");
+            } else {
+               setSyncedRole(data.role || "tourist");
+            }
+          } else {
+            // Initialize empty profile
+            await setDoc(doc(db, "users", user.uid), {
+              name: user.displayName || "User",
+              email: user.email,
+              role: role || "tourist",
+              onboardingComplete: false
+            });
+            router.push("/onboarding");
+          }
+        } catch (e) {
+            console.error("Error syncing actual user data", e);
         }
       }
     }

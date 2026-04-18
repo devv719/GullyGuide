@@ -4,16 +4,16 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%; /* Zinc-50 for slightly off-white */
+    --background: 0 0% 100%; /* Pure white */
     --foreground: 240 10% 10%; /* Zinc-900 */
     --card: 0 0% 100%;
     --card-foreground: 240 10% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 10%;
-    --primary: 165 76% 24%; /* Teal 800 - #0F6E56 */
+    --primary: 243 75% 59%; /* Indigo 600 - Minimal primary */
     --primary-foreground: 0 0% 100%;
-    --secondary: 35 78% 41%; /* Amber 600 - #BA7517 */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 43 96% 58%; /* Amber/Gold Accent */
+    --secondary-foreground: 240 10% 10%;
     --muted: 240 5% 96%;
     --muted-foreground: 240 4% 46%;
     --accent: 240 5% 96%;
@@ -22,21 +22,21 @@
     --destructive-foreground: 0 0% 100%;
     --border: 240 6% 90%;
     --input: 240 6% 90%;
-    --ring: 165 76% 24%;
+    --ring: 243 75% 59%; /* Indigo Focus Ring */
     --radius: 0.75rem; /* rounded-xl */
   }
 
   .dark {
-    --background: 240 10% 8%; /* Zinc-900 */
+    --background: 240 10% 8%; /* Deep Zinc-900 */
     --foreground: 0 0% 98%;
-    --card: 240 10% 12%; /* Zinc-900 slightly lighter */
+    --card: 240 10% 10%; /* Flat Zinc */
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 10%;
     --popover-foreground: 0 0% 98%;
-    --primary: 165 76% 24%; /* Teal 800 */
+    --primary: 243 75% 59%; /* Indigo 600 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 35 78% 41%; /* Amber 600 */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 43 96% 58%; /* Amber Accent */
+    --secondary-foreground: 240 10% 10%;
     --muted: 240 5% 16%;
     --muted-foreground: 240 5% 64%;
     --accent: 240 5% 16%;
@@ -45,7 +45,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 4% 20%;
     --input: 240 4% 20%;
-    --ring: 165 76% 24%;
+    --ring: 243 75% 59%;
   }
 }
 

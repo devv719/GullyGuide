@@ -39,6 +39,14 @@ export default function OnboardingPage() {
   const handleComplete = async () => {
     if (!user) return;
     setLoading(true);
+
+    if (user.uid === "mock-123") {
+      localStorage.setItem("MOCK_ONBOARDED", "true");
+      localStorage.setItem("MOCK_DEV_ROLE", role || "tourist");
+      router.push("/dashboard");
+      return;
+    }
+
     try {
       const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, {

@@ -94,21 +94,21 @@ export default function TouristView({ user }) {
 
       {/* Summary Cards */}
       <div className="grid sm:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between hover:border-primary/30 transition-colors">
+        <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between hover:border-primary/30 transition-colors">
           <div className="flex justify-between items-start">
              <p className="text-zinc-500 font-bold text-xs uppercase tracking-widest">Total Planned</p>
              <Plane className="w-5 h-5 text-zinc-400" />
           </div>
           <p className="text-3xl font-black text-zinc-900 dark:text-white mt-4">{totalTrips}</p>
         </div>
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between hover:border-primary/30 transition-colors">
+        <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between hover:border-primary/30 transition-colors">
           <div className="flex justify-between items-start">
              <p className="text-zinc-500 font-bold text-xs uppercase tracking-widest">Upcoming Bookings</p>
-             <CalendarIcon className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+             <CalendarIcon className="w-5 h-5 text-primary" />
           </div>
           <p className="text-3xl font-black text-zinc-900 dark:text-white mt-4">{upcomingCount}</p>
         </div>
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between hover:border-primary/30 transition-colors">
+        <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between hover:border-primary/30 transition-colors">
           <div className="flex justify-between items-start">
              <p className="text-zinc-500 font-bold text-xs uppercase tracking-widest">Total Expenses Logged</p>
              <Wallet className="w-5 h-5 text-amber-600 dark:text-amber-500" />
@@ -124,9 +124,9 @@ export default function TouristView({ user }) {
             initial={{ opacity: 0, scale: 0.98, height: 0 }}
             animate={{ opacity: 1, scale: 1, height: 'auto' }}
             exit={{ opacity: 0, scale: 0.98, height: 0 }}
-            className="bg-white dark:bg-zinc-900 rounded-2xl border border-primary/20 dark:border-primary/30 overflow-hidden shadow-md"
+            className="bg-white dark:bg-zinc-900 rounded-xl border border-primary/20 dark:border-primary/30 overflow-hidden shadow-md"
           >
-            <div className="p-6 bg-teal-50 dark:bg-teal-900/10">
+            <div className="p-6 bg-primary/5">
               <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-4">Start Planning</h3>
               <form onSubmit={handleCreateTrip} className="flex flex-col md:flex-row gap-4 w-full">
                 <input 
@@ -157,15 +157,15 @@ export default function TouristView({ user }) {
         
         {loadingTrips ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="h-48 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 animate-pulse"></div>
-            <div className="h-48 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 animate-pulse"></div>
+            <div className="h-48 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 animate-pulse shadow-sm"></div>
+            <div className="h-48 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 animate-pulse shadow-sm"></div>
           </div>
         ) : trips.length === 0 ? (
-          <div className="border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl p-12 flex flex-col items-center justify-center text-center bg-zinc-50 dark:bg-zinc-900/50">
+          <div className="bg-white dark:bg-zinc-900 rounded-xl p-12 flex flex-col items-center justify-center text-center border border-zinc-200 dark:border-zinc-800 shadow-sm">
              <MapPin className="w-12 h-12 text-zinc-400 mb-4" />
              <p className="text-zinc-900 dark:text-white font-bold">No trips planned yet.</p>
-             <p className="text-zinc-500 text-sm mt-1 mb-6">Create your first itinerary to start tracking.</p>
-             <button onClick={() => setIsCreatingTrip(true)} className="text-primary font-bold hover:underline">Plan a Trip</button>
+             <p className="text-zinc-500 text-sm mt-1 mb-6 font-medium">Create your first itinerary to start tracking.</p>
+             <button onClick={() => setIsCreatingTrip(true)} className="text-primary hover:text-primary/80 transition-colors font-bold">Plan a Trip</button>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -174,11 +174,11 @@ export default function TouristView({ user }) {
                 key={trip.id}
                 whileHover={{ y: -4 }}
                 onClick={() => router.push(`/dashboard/trips/${trip.id}`)}
-                className="bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 hover:border-primary/50 cursor-pointer transition-all shadow-sm hover:shadow-lg group flex flex-col justify-between h-48"
+                className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 hover:border-primary/50 cursor-pointer transition-all shadow-sm hover:shadow-lg group flex flex-col justify-between h-48"
               >
                 <div>
                   <div className="flex justify-between items-start mb-3">
-                     <span className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md ${trip.status === 'upcoming' ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400'}`}>
+                     <span className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md ${trip.status === 'upcoming' ? 'bg-primary/10 text-primary' : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400'}`}>
                        {trip.status}
                      </span>
                      <button onClick={(e) => deleteTrip(trip.id, e)} className="text-zinc-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"><Trash2 className="w-4 h-4"/></button>

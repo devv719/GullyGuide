@@ -6,7 +6,7 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider, db } from "@/lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { Compass } from "lucide-react";
+import { Compass, Code } from "lucide-react";
 import Skeleton from "@/components/Skeleton";
 
 export default function LoginPage() {
@@ -41,10 +41,15 @@ export default function LoginPage() {
       }
       
     } catch (err) {
-       if (err.code === "auth/configuration-not-found" || err.message.includes("configuration-not-found") || err.message.includes("api key")) {
-        console.warn("MOCK LOGIN: Bypassing Firebase Auth missing config.");
-        // Simulated redirect for missing config
-        router.push("/onboarding");
+       if (
+         err.code === "auth/configuration-not-found" || 
+         err.message.includes("configuration-not-found") || 
+         err.message.includes("api key") ||
+         err.message.includes("offline") ||
+         err.code === "unavailable"
+       ) {
+        console.warn("MOCK LOGIN: Bypassing Firebase Auth / Offline issue.");
+        handleDevLogin();
         return;
       }
       setError(err.message.replace("Firebase:", "").trim());
@@ -52,11 +57,15 @@ export default function LoginPage() {
     }
   };
 
+  const handleDevLogin = () => {
+     localStorage.setItem("MOCK_DEV_USER", "true");
+     router.push("/onboarding");
+  };
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)] bg-zinc-50 dark:bg-zinc-950">
       {/* Left side - Visual/Brand */}
       <div className="hidden lg:flex w-1/2 bg-primary p-12 flex-col justify-between relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
         <div className="relative z-10 w-full mb-auto mt-20">
            <Compass className="w-16 h-16 text-white mb-8" />
         </div>
@@ -64,7 +73,7 @@ export default function LoginPage() {
            <h1 className="text-5xl font-extrabold mb-4 leading-tight">
              Welcome back to the city.
            </h1>
-           <p className="text-xl text-teal-100 max-w-md">
+           <p className="text-xl text-indigo-100 max-w-md">
              Log in to plan your next adventure or manage your guide bookings.
            </p>
         </div>
@@ -85,7 +94,7 @@ export default function LoginPage() {
               </div>
             )}
             
-            <div className="w-full">
+            <div className="w-full space-y-3">
               {loading ? (
                 <Skeleton className="w-full h-12 rounded-xl" />
               ) : (
@@ -102,6 +111,14 @@ export default function LoginPage() {
                   Sign in with Google
                 </button>
               )}
+              
+              <button
+                onClick={handleDevLogin}
+                className="w-full py-3 px-4 font-bold rounded-xl border border-primary/20 dark:border-primary/50 bg-primary/5 dark:bg-primary/10 text-primary hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors flex items-center justify-center gap-3 shadow-sm"
+              >
+                <Code className="w-5 h-5" />
+                Quick Dev Preview (Bypass)
+              </button>
             </div>
             
             <div className="relative">
