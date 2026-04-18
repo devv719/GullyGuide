@@ -1,156 +1,137 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { Star, Circle, Compass, ShieldCheck, MapPin } from "lucide-react";
-import { staggerContainer, fadeUpVariant, cardRevealVariant, fadeLeftVariant } from "@/lib/animations";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Compass, MapPin, Star, ShieldCheck, Map, Users, ArrowRight } from "lucide-react";
+
+const FloatingCityTags = () => {
+  const cities = ["Mumbai", "Jaipur", "Goa", "Delhi", "Varanasi", "Kochi"];
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20 dark:opacity-10 z-0">
+      {cities.map((city, i) => (
+        <motion.div
+          key={city}
+          initial={{ y: "100vh", x: Math.random() * 100 + "%", opacity: 0 }}
+          animate={{
+            y: "-20vh",
+            opacity: [0, 1, 1, 0],
+          }}
+          transition={{
+            duration: 15 + Math.random() * 10,
+            repeat: Infinity,
+            delay: i * 3,
+            ease: "linear",
+          }}
+          className="absolute text-2xl font-bold text-primary whitespace-nowrap"
+        >
+          #{city}
+        </motion.div>
+      ))}
+    </div>
+  );
+};
 
 export default function Home() {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"]
-  });
-
-  // Parallax calculations (Background Elements move slower than scroll)
-  const yParallaxStar = useTransform(scrollYProgress, [0, 1], [0, 300]);
-  const yParallaxCircle = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  
-  // Hero Text fades out rapidly as you scroll down
-  const opacityFadeOut = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-
   return (
-    <div ref={containerRef} className="flex flex-col items-center overflow-hidden bg-background">
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center">
       
       {/* HERO SECTION */}
-      <section className="w-full relative py-20 lg:py-32 flex flex-col items-center justify-center min-h-[80vh]">
+      <section className="relative w-full py-24 lg:py-32 flex flex-col items-center justify-center overflow-hidden">
+        <FloatingCityTags />
         
-        {/* Floating Background Neon Shapes with Parallax (Optimized for performance) */}
-        <motion.div 
-          style={{ y: yParallaxStar, willChange: "transform" }}
-          animate={{ rotate: 180 }} 
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }} 
-          className="absolute left-10 lg:left-32 top-32 lg:top-40 z-0"
-        >
-          <Star className="w-12 h-12 text-[#00f2fe] drop-shadow-[0_0_10px_rgba(0,242,254,0.5)] fill-[#00f2fe]" />
-        </motion.div>
-        
-        <motion.div 
-          style={{ y: yParallaxCircle, willChange: "transform" }}
-          animate={{ scale: [1, 1.05, 1] }} 
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} 
-          className="absolute right-10 lg:right-32 top-60 lg:top-80 z-0"
-        >
-          <div className="w-16 h-16 rounded-full border-4 border-[#ff2a85] shadow-[0_0_15px_rgba(255,42,133,0.5)]"></div>
-        </motion.div>
-
-        {/* Hero Content (Staggered Animation + Scroll Fade Out) */}
-        <motion.div 
-          style={{ opacity: opacityFadeOut, willChange: "opacity, transform" }}
-          className="text-center relative z-10 flex flex-col items-center px-4 mt-16"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div variants={fadeUpVariant} className="neon-border-pink rounded-full px-6 py-2 mb-8 flex items-center justify-center font-black uppercase text-[10px] tracking-widest text-[#ff2a85]">
-             LOCAL TRAVEL, SIMPLIFIED.
-          </motion.div>
-
-          {/* Staggered Words */}
-          <motion.div className="flex flex-col items-center leading-none uppercase gap-4 mt-2">
-            <motion.h1 variants={fadeUpVariant} className="text-3d-white text-5xl sm:text-6xl md:text-7xl lg:text-[7rem] font-black tracking-tighter">
-              EXPLORE,
-            </motion.h1>
-            <motion.h1 variants={fadeUpVariant} className="text-3d-white text-5xl sm:text-6xl md:text-7xl lg:text-[7rem] font-black tracking-tighter">
-              CONNECT &
-            </motion.h1>
-            <motion.h1 variants={fadeUpVariant} className="text-3d-purple text-5xl sm:text-6xl md:text-7xl lg:text-[7rem] font-black tracking-tighter">
-              DISCOVER
-            </motion.h1>
-            <motion.h1 variants={fadeUpVariant} className="text-3d-white text-5xl sm:text-6xl md:text-7xl lg:text-[7rem] font-black tracking-tighter">
-              THE REAL CITY.
-            </motion.h1>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* FEATURES SECTION (Scroll Reveal via whileInView) */}
-      <section className="w-full relative py-20 bg-dot-pattern border-t border-[#27272a] overflow-hidden">
-        {/* Glow Line Seperator */}
-        <div className="absolute top-0 w-full h-[1px] bg-[#00f2fe] shadow-[0_0_15px_#00f2fe,0_0_30px_#00f2fe]"></div>
-
-        <motion.div 
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-        >
-          <motion.div variants={fadeUpVariant} className="flex items-center gap-4 mb-20 uppercase leading-[0.9]">
-            <h2 className="text-3d-white text-5xl md:text-7xl font-black">OUTRAGEOUS</h2>
-            <h2 className="text-3d-purple text-5xl md:text-7xl font-black">FEATURES</h2>
-          </motion.div>
-
-          {/* Cards Grid */}
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-10 w-full mt-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 text-sm font-semibold mb-6">
+              <Compass className="w-4 h-4" /> Discover India
+            </span>
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 max-w-4xl mx-auto leading-tight text-zinc-900 dark:text-white">
+              Explore cities like a local, guided by students who actually live there.
+            </h1>
+            <p className="text-xl text-zinc-600 dark:text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+              GullyGuide connects curious travellers with student guides who know every gully, chai stall, and hidden sunset spot.
+            </p>
             
-            {/* Card 1: Teal */}
-            <motion.div 
-              variants={cardRevealVariant}
-              whileHover={{ scale: 1.02, y: -5, boxShadow: "0 10px 30px -10px rgba(0, 242, 254, 0.2)" }} 
-              className="neon-border-teal bg-[#131318] rounded-[2rem] p-8 md:translate-y-6 transition-all duration-300 transform-gpu"
-              style={{ willChange: "transform" }}
-            >
-              <div className="w-14 h-14 bg-[#131318] border-2 border-[#00f2fe] rounded-2xl flex items-center justify-center mb-10 shadow-[0_0_10px_#00f2fe]">
-                 <MapPin className="w-6 h-6 text-[#00f2fe]" />
-              </div>
-              <h3 className="text-3xl font-black mb-4 uppercase tracking-tight text-[#00f2fe]">
-                authentic<br/>ROUTES
-              </h3>
-              <p className="text-sm font-bold text-slate-400 leading-relaxed">
-                Skip the generic tourist maps. Get real-time, curated local spots across hidden food alleys and centuries-old monuments shown strictly by native students.
-              </p>
-            </motion.div>
-
-            {/* Card 2: Yellow */}
-            <motion.div 
-              variants={cardRevealVariant}
-              whileHover={{ scale: 1.02, y: -5, boxShadow: "0 10px 30px -10px rgba(255, 220, 0, 0.2)" }} 
-              className="neon-border-yellow bg-[#131318] rounded-[2rem] p-8 -translate-y-4 transition-all duration-300 transform-gpu"
-              style={{ willChange: "transform" }}
-            >
-              <div className="w-14 h-14 bg-[#131318] border-2 border-[#ffdc00] rounded-2xl flex items-center justify-center mb-10 shadow-[0_0_10px_#ffdc00]">
-                 <ShieldCheck className="w-6 h-6 text-[#ffdc00]" />
-              </div>
-              <h3 className="text-3xl font-black mb-4 uppercase tracking-tight text-[#ffdc00]">
-                STUDENT<br/>VERIFIED
-              </h3>
-              <p className="text-sm font-bold text-slate-400 leading-relaxed">
-                Trust matters. Every single guide on our platform goes through mandatory University ID and native ID verification before they can host a single tourist.
-              </p>
-            </motion.div>
-
-            {/* Card 3: Orange */}
-            <motion.div 
-             variants={cardRevealVariant}
-             whileHover={{ scale: 1.02, y: -5, boxShadow: "0 10px 30px -10px rgba(255, 90, 0, 0.2)" }} 
-             className="neon-border-orange bg-[#131318] rounded-[2rem] p-8 md:translate-y-12 transition-all duration-300 transform-gpu"
-             style={{ willChange: "transform" }}
-            >
-              <div className="w-14 h-14 bg-[#131318] border-2 border-[#ff5a00] rounded-2xl flex items-center justify-center mb-10 shadow-[0_0_10px_#ff5a00]">
-                 <Compass className="w-6 h-6 text-[#ff5a00]" />
-              </div>
-              <h3 className="text-3xl font-black mb-4 uppercase tracking-tight text-[#ff5a00]">
-                DYNAMIC<br/>PRICING
-              </h3>
-              <p className="text-sm font-bold text-slate-400 leading-relaxed">
-                Visual tour projections. Decide your own budget and bid on student hours, bypassing the outrageous agency markups while supporting college tuition funds.
-              </p>
-            </motion.div>
-
-          </div>
-        </motion.div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href="/login" className="px-8 py-4 bg-primary text-white hover:bg-primary/90 transition-colors rounded-xl font-bold text-lg flex items-center gap-2 shadow-sm w-full sm:w-auto justify-center">
+                Start planning your trip <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link href="/login" className="px-8 py-4 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors rounded-xl font-bold text-lg w-full sm:w-auto justify-center">
+                Become a guide
+              </Link>
+            </div>
+          </motion.div>
+        </div>
       </section>
+
+      {/* HOW IT WORKS */}
+      <section className="w-full py-20 bg-zinc-50 dark:bg-zinc-900 border-y border-zinc-100 dark:border-zinc-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">How it works</h2>
+            <p className="text-zinc-600 dark:text-zinc-400">Three simple steps to your next great adventure.</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white dark:bg-black p-8 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm text-center">
+              <div className="w-14 h-14 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <MapPin className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">1. Tell us where you're headed</h3>
+              <p className="text-zinc-600 dark:text-zinc-400 text-sm">Enter your destination, dates, and budget. Our AI co-pilot will sketch an initial itinerary.</p>
+            </div>
+            <div className="bg-white dark:bg-black p-8 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm text-center relative md:-translate-y-4">
+              <div className="w-14 h-14 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Users className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">2. Browse student guides</h3>
+              <p className="text-zinc-600 dark:text-zinc-400 text-sm">Find verified local students who match your interests. Book them by the hour, dynamically priced.</p>
+            </div>
+            <div className="bg-white dark:bg-black p-8 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm text-center">
+              <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Map className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">3. Explore with your AI co-pilot</h3>
+              <p className="text-zinc-600 dark:text-zinc-400 text-sm">Use our interactive map and AI travel buddy to track budget, navigate streets, and find live events.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* GUIDE CTA BANNER */}
+      <section className="w-full py-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-primary text-primary-foreground rounded-3xl p-10 md:p-16 text-center relative overflow-hidden shadow-lg">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+            <div className="relative z-10">
+              <h2 className="text-3xl md:text-5xl font-extrabold mb-6">Are you a local student? <br/> Earn while you explore.</h2>
+              <p className="text-lg text-primary-foreground/80 mb-10 max-w-2xl mx-auto">Set your own schedule. Share your favorite secret spots. Get paid directly by curious travellers exploring your city.</p>
+              <Link href="/login" className="px-8 py-4 bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors rounded-xl font-bold text-lg inline-block shadow-md">
+                Join as a guide →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="w-full border-t border-zinc-200 dark:border-zinc-800 py-12 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-2 font-black text-xl text-primary">
+            <Compass className="w-6 h-6" /> GullyGuide
+          </div>
+          <div className="flex gap-6 text-sm text-zinc-600 dark:text-zinc-400 font-medium">
+            <Link href="#">About</Link>
+            <Link href="#">Blog</Link>
+            <Link href="#">For Guides</Link>
+            <Link href="#">Privacy</Link>
+            <Link href="#">Terms</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
