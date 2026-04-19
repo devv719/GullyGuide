@@ -3,7 +3,7 @@
 import { useAuth } from "@/lib/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LogOut, LayoutDashboard, Search, Calendar, Settings, Bell, Menu, Compass } from "lucide-react";
+import { LogOut, LayoutDashboard, Search, Calendar, Settings, Bell, Menu, Compass, MessageSquare, UserSquare2 } from "lucide-react";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import Link from "next/link";
@@ -92,10 +92,17 @@ export default function DashboardLayout({ children }) {
 
   const isGuide = syncedRole === "guide";
 
-  const navLinks = [
+  const navLinks = isGuide ? [
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Bookings", href: "/dashboard/bookings", icon: Calendar, badge: 2 },
+    { name: "Messages", href: "/dashboard/chat", icon: MessageSquare },
+    { name: "My Profile", href: "/dashboard/profile", icon: UserSquare2 },
+    { name: "Settings", href: "/dashboard/settings", icon: Settings },
+  ] : [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Explore Guides", href: "/guides", icon: Search },
-    { name: isGuide ? "Assignments" : "My Trips", href: "/dashboard/trips", icon: Calendar },
+    { name: "Explore guides", href: "/dashboard/explore", icon: Search },
+    { name: "My trips", href: "/dashboard/trips", icon: Calendar },
+    { name: "Messages", href: "/dashboard/chat", icon: MessageSquare, badge: 3 },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
@@ -120,10 +127,23 @@ export default function DashboardLayout({ children }) {
             // Exceptions for exact matching
             const trulyActive = (link.href === "/dashboard" && pathname !== "/dashboard") ? false : isActive;
             
+            const activeClass = trulyActive 
+                ? (isGuide 
+                    ? 'bg-[#E1F5EE] text-[#0F6E56] dark:bg-[#0F6E56]/30 dark:text-[#E1F5EE]' 
+                    : 'bg-[#EBEAFA] text-[#534AB7] dark:bg-[#534AB7]/30 dark:text-[#EBEAFA]')
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900';
+
+            const badgeClass = isGuide ? "bg-[#0F6E56]" : "bg-[#534AB7]";
+
             return (
-              <Link key={link.name} href={link.href} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${trulyActive ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900'}`}>
+              <Link key={link.name} href={link.href} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${activeClass}`}>
                 <Icon className="w-5 h-5" />
-                <span className="flex-1">{link.name}</span>
+                <span className="flex-1 font-bold">{link.name}</span>
+                {link.badge && (
+                  <span className={`${badgeClass} text-white text-[10px] font-black px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-[20px]`}>
+                    {link.badge}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -136,7 +156,9 @@ export default function DashboardLayout({ children }) {
             </div>
             <div className="flex-1 overflow-hidden">
               <p className="font-bold text-sm text-zinc-900 dark:text-white truncate">{user.displayName || "User"}</p>
-              <p className="text-[11px] text-zinc-500 truncate uppercase tracking-wider font-semibold">{syncedRole}</p>
+              <p className="text-[11px] text-zinc-500 truncate font-semibold flex items-center gap-1">
+                 {syncedRole === 'guide' ? "Guide · Mumbai" : "Tourist · Remote"}
+              </p>
             </div>
           </div>
         </div>
@@ -157,7 +179,7 @@ export default function DashboardLayout({ children }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className={`hidden md:flex px-3 py-1 rounded-full text-xs font-bold items-center gap-2 border ${isGuide ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-900/50" : "bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-900/30 dark:text-teal-400 dark:border-teal-900/50"}`}>
+            <div className={`hidden md:flex px-3 py-1 rounded-full text-xs font-bold items-center gap-2 border ${isGuide ? "bg-[#E1F5EE] text-[#0F6E56] border-[#0F6E56]/20 dark:bg-[#0F6E56]/30 dark:text-[#E1F5EE] dark:border-[#0F6E56]/50" : "bg-[#EBEAFA] text-[#534AB7] border-[#534AB7]/20 dark:bg-[#534AB7]/30 dark:text-[#EBEAFA] dark:border-[#534AB7]/50"}`}>
                {syncedRole.toUpperCase()} ACCOUNT
             </div>
 

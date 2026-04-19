@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/auth";
 import { db } from "@/lib/firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { ArrowRight, Compass, User, AlertCircle } from "lucide-react";
 
 export default function OnboardingPage() {
@@ -101,13 +101,34 @@ export default function OnboardingPage() {
          return;
       }
 
-      await setDoc(doc(db, "users", user.uid), {
-        role,
-        name: role === "tourist" ? touristData.name : guideData.name,
-        onboardingComplete: true,
-        createdAt: new Date(),
-        profile: role === "tourist" ? touristData : guideData
-      });
+      const promises = [
+        setDoc(doc(db, "users", user.uid), {
+          role,
+          name: role === "tourist" ? touristData.name : guideData.name,
+          onboardingComplete: true,
+          createdAt: serverTimestamp(),
+          profile: role === "tourist" ? touristData : guideData
+        })
+      ];
+
+      if (role === "guide") {
+         promises.push(setDoc(doc(db, "guides", user.uid), {
+           uid: user.uid,
+           name: guideData.name,
+           photoURL: user.photoURL || "",
+           city: guideData.city,
+           bio: guideData.bio || "",
+           languages: guideData.languages.split(',').map(s=>s.trim()).filter(Boolean),
+           pricePerHour: parseInt(guideData.pricing) || 0,
+           experiences: guideData.expertise || [],
+           rating: 0,
+           totalReviews: 0,
+           available: true,
+           createdAt: serverTimestamp()
+         }));
+      }
+
+      await Promise.all(promises);
 
       console.log("data saved");
       setLoading(false);
