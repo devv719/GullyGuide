@@ -53,6 +53,20 @@ function MapPanController({ markers, focusedPlaceId }) {
   return null;
 }
 
+// Hook to control re-centering if the `center` props changes (e.g. city changes)
+function MapCenterController({ center, markers }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    // Only force center to city coordinates if we don't have markers mapping a bounds
+     if ((!markers || markers.length === 0) && center && center.length === 2 && !isNaN(center[0])) {
+         map.setView(center, map.getZoom(), { animate: true });
+     }
+  }, [center, markers, map]);
+  
+  return null;
+}
+
 export default function MapClient({ 
   center = [19.0760, 72.8777], // Default: Mumbai
   zoom = 12, 
@@ -74,6 +88,7 @@ export default function MapClient({
         zoomControl={false} // Disable default top-left control to position custom controls if needed
       >
         <MapPanController markers={markers} focusedPlaceId={focusedPlaceId} />
+        <MapCenterController center={center} markers={markers} />
 
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

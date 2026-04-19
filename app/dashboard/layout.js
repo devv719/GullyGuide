@@ -9,6 +9,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import Link from "next/link";
 import Skeleton from "@/components/Skeleton";
 import CopilotWidget from "@/components/copilot/CopilotChat";
+import { LocationProvider } from "@/lib/LocationContext";
 
 export default function DashboardLayout({ children }) {
   const { user, role, loading } = useAuth();
@@ -179,7 +180,9 @@ export default function DashboardLayout({ children }) {
 
         {/* Dynamic Inner Route */}
         <div className="flex-1 p-6 lg:p-8 max-w-7xl mx-auto w-full">
-           {children}
+           <LocationProvider>
+             {children}
+           </LocationProvider>
         </div>
       </main>
 
