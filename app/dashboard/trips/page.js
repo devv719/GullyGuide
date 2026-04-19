@@ -95,15 +95,15 @@ export default function TripsRoutingHub() {
       const tripParams = {
         userId: user.uid,
         name: newTripName,
-        cityName: finalCity.name,
-        coordinates: {
+        city: {
+          name: finalCity.name,
           lat: finalCity.lat,
           lng: finalCity.lng
         },
         budget: Number(newTripBudget),
         status: "upcoming",
-        dailyPlans: [],
-        expenses: [],
+        eventsDateMap: [],
+        days: [],
         createdAt: serverTimestamp()
       };
 
@@ -249,8 +249,7 @@ export default function TripsRoutingHub() {
                   </div>
                   <h4 className="text-xl font-extrabold text-zinc-900 dark:text-white truncate mt-2 pb-1">{trip.name}</h4>
                   <p className="text-zinc-500 text-sm flex items-center gap-1.5 capitalize font-medium">
-                     {/* Support old standard (trip.city) and new generic Schema (trip.cityName) */}
-                     <MapPin className="w-4 h-4 text-zinc-400" /> {trip.cityName || trip.city}
+                     <MapPin className="w-4 h-4 text-zinc-400" /> {trip.city?.name || trip.cityName || trip.city || "Unknown City"}
                   </p>
                 </div>
                 
