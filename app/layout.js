@@ -1,11 +1,12 @@
-import { Inter } from "next/font/google";
+import { Kalam, Patrick_Hand } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Navbar from "@/components/Navbar";
 
 import { AuthProvider } from "@/lib/auth";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const kalam = Kalam({ weight: ["700"], subsets: ["latin"], variable: "--font-kalam" });
+const patrickHand = Patrick_Hand({ weight: ["400"], subsets: ["latin"], variable: "--font-patrick" });
 
 export const metadata = {
   title: "GullyGuide | Real streets. Real stories.",
@@ -15,9 +16,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} min-h-screen bg-dot-pattern flex flex-col`}>
+      <body className={`${kalam.variable} ${patrickHand.variable} font-body min-h-screen bg-background text-foreground flex flex-col`}>
         <AuthProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light">
             <Navbar />
             <main className="flex-1">{children}</main>
           </ThemeProvider>

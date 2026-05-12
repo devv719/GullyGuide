@@ -1,91 +1,155 @@
 @import "leaflet/dist/leaflet.css";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: oklch(1 0 0); /* Pure white */
-    --foreground: oklch(0.148 0.004 228.8); /* Zinc-900 */
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.148 0.004 228.8);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.148 0.004 228.8);
-    --primary: oklch(0.496 0.265 301.924); /* Indigo 600 - Minimal primary */
-    --primary-foreground: oklch(0.977 0.014 308.299);
-    --secondary: oklch(0.967 0.001 286.375); /* Amber/Gold Accent */
-    --secondary-foreground: oklch(0.21 0.006 285.885);
-    --muted: oklch(0.963 0.002 197.1);
-    --muted-foreground: oklch(0.56 0.021 213.5);
-    --accent: oklch(0.963 0.002 197.1);
-    --accent-foreground: oklch(0.218 0.008 223.9);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: 0 0% 100%;
-    --border: oklch(0.925 0.005 214.3);
-    --input: oklch(0.925 0.005 214.3);
-    --ring: oklch(0.723 0.014 214.4); /* Indigo Focus Ring */
-    --radius: 0.625rem; /* rounded-xl */ --chart-1: oklch(0.872 0.007 219.6); --chart-2: oklch(0.56 0.021 213.5); --chart-3: oklch(0.45 0.017 213.2); --chart-4: oklch(0.378 0.015 216); --chart-5: oklch(0.275 0.011 216.9); --sidebar: oklch(0.987 0.002 197.1); --sidebar-foreground: oklch(0.148 0.004 228.8); --sidebar-primary: oklch(0.558 0.288 302.321); --sidebar-primary-foreground: oklch(0.977 0.014 308.299); --sidebar-accent: oklch(0.963 0.002 197.1); --sidebar-accent-foreground: oklch(0.218 0.008 223.9); --sidebar-border: oklch(0.925 0.005 214.3); --sidebar-ring: oklch(0.723 0.014 214.4);
-  }
-
-  .dark {
-    --background: oklch(0.148 0.004 228.8); /* Deep Zinc-900 */
-    --foreground: oklch(0.987 0.002 197.1);
-    --card: oklch(0.218 0.008 223.9); /* Flat Zinc */
-    --card-foreground: oklch(0.987 0.002 197.1);
-    --popover: oklch(0.218 0.008 223.9);
-    --popover-foreground: oklch(0.987 0.002 197.1);
-    --primary: oklch(0.438 0.218 303.724); /* Indigo 600 */
-    --primary-foreground: oklch(0.977 0.014 308.299);
-    --secondary: oklch(0.274 0.006 286.033); /* Amber Accent */
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.275 0.011 216.9);
-    --muted-foreground: oklch(0.723 0.014 214.4);
-    --accent: oklch(0.275 0.011 216.9);
-    --accent-foreground: oklch(0.987 0.002 197.1);
-    --destructive: oklch(0.704 0.191 22.216);
-    --destructive-foreground: 0 0% 98%;
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.56 0.021 213.5);
-    --chart-1: oklch(0.872 0.007 219.6);
-    --chart-2: oklch(0.56 0.021 213.5);
-    --chart-3: oklch(0.45 0.017 213.2);
-    --chart-4: oklch(0.378 0.015 216);
-    --chart-5: oklch(0.275 0.011 216.9);
-    --sidebar: oklch(0.218 0.008 223.9);
-    --sidebar-foreground: oklch(0.987 0.002 197.1);
-    --sidebar-primary: oklch(0.627 0.265 303.9);
-    --sidebar-primary-foreground: oklch(0.977 0.014 308.299);
-    --sidebar-accent: oklch(0.275 0.011 216.9);
-    --sidebar-accent-foreground: oklch(0.987 0.002 197.1);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.56 0.021 213.5);
-  }
-  .theme {
-    --font-heading: var(--font-sans);
-    --font-sans: var(--font-sans);
-  }
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
+    --background: #fdfbf7;
+    --foreground: #2d2d2d;
+    --card: #ffffff;
+    --card-foreground: #2d2d2d;
+    --popover: #ffffff;
+    --popover-foreground: #2d2d2d;
+    --primary: #2d2d2d;
+    --primary-foreground: #fdfbf7;
+    --secondary: #2d5da1;
+    --secondary-foreground: #ffffff;
+    --muted: #e5e0d8;
+    --muted-foreground: #6b6560;
+    --accent: #ff4d4d;
+    --accent-foreground: #ffffff;
+    --destructive: #ff4d4d;
+    --destructive-foreground: #ffffff;
+    --border: #2d2d2d;
+    --input: #2d2d2d;
+    --ring: #2d5da1;
+    --radius: 0.5rem;
   }
 }
 
 @layer base {
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', sans-serif;
+    @apply bg-background text-foreground;
+    font-family: var(--font-patrick), cursive, sans-serif;
+    background-image: radial-gradient(#e5e0d8 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  ::selection {
+    background-color: rgba(255, 77, 77, 0.2);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-kalam), cursive;
+  }
+
+  /* Remove default focus outline, we style our own */
+  *:focus {
+    outline: none;
   }
 }
 
-/* Tabular nums for all monetary and data values */
-.tabular-nums {
-  font-variant-numeric: tabular-nums;
+@layer components {
+  /* Tape decoration — translucent bar at top center */
+  .tape-decoration {
+    position: relative;
+  }
+  .tape-decoration::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-2deg);
+    width: 80px;
+    height: 24px;
+    background: rgba(200, 200, 190, 0.5);
+    border-radius: 2px;
+    z-index: 10;
+  }
+
+  /* Tack decoration — red circle at top center */
+  .tack-decoration {
+    position: relative;
+  }
+  .tack-decoration::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background: #ff4d4d;
+    border-radius: 50%;
+    border: 2px solid #cc3333;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+
+  /* Wavy underline for links */
+  .wavy-underline {
+    text-decoration: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: #ff4d4d;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+  }
+
+  /* Rough circle enclosure for icons */
+  .rough-circle {
+    border: 3px solid #2d2d2d;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  }
+
+  /* Dashed divider */
+  .dashed-divider {
+    border-top: 2px dashed #2d2d2d;
+    opacity: 0.3;
+  }
+
+  /* Post-it note style */
+  .post-it {
+    background: #fff9c4;
+    border: 2px solid #2d2d2d;
+    border-radius: 2px 15px 2px 15px / 15px 2px 15px 2px;
+    box-shadow: 3px 3px 0px 0px rgba(45, 45, 45, 0.15);
+  }
+
+  /* Hand-drawn button press effect */
+  .btn-press:active {
+    transform: translate(4px, 4px) !important;
+    box-shadow: none !important;
+  }
+
+  /* Notebook lines background */
+  .notebook-lines {
+    background-image:
+      repeating-linear-gradient(
+        transparent,
+        transparent 31px,
+        #e5e0d8 31px,
+        #e5e0d8 32px
+      );
+  }
+}
+
+@layer utilities {
+  /* Tabular nums for all monetary and data values */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Hide scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

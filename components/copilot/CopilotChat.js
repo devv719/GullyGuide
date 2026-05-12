@@ -64,9 +64,10 @@ export default function CopilotWidget() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors z-50 group hover:scale-105 active:scale-95"
+            className="fixed bottom-6 right-6 w-14 h-14 bg-accent text-white border-[3px] border-foreground shadow-sketch flex items-center justify-center hover:shadow-sketch-hover hover:translate-x-[2px] hover:translate-y-[2px] transition-all z-50 active:shadow-none active:translate-x-[4px] active:translate-y-[4px]"
+            style={{ borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px" }}
           >
-            <Sparkles className="w-6 h-6 group-hover:animate-pulse" />
+            <Sparkles className="w-6 h-6" strokeWidth={2.5} />
           </motion.button>
         )}
       </AnimatePresence>
@@ -75,47 +76,64 @@ export default function CopilotWidget() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, y: 20, scale: 0.95, rotate: -1 }}
+            animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95, rotate: 1 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-6 right-6 sm:w-[400px] w-[calc(100vw-32px)] h-[600px] max-h-[80vh] bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden"
+            className="fixed bottom-6 right-6 sm:w-[400px] w-[calc(100vw-32px)] h-[600px] max-h-[80vh] bg-paper border-[3px] border-foreground shadow-sketch-lg flex flex-col z-50 overflow-hidden"
+            style={{ borderRadius: "15px 225px 15px 255px / 255px 15px 225px 15px" }}
           >
             {/* Header */}
-            <div className="px-4 py-4 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center bg-teal-50 dark:bg-teal-900/10">
+            <div className="px-4 py-4 border-b-2 border-dashed border-foreground/30 flex justify-between items-center bg-postit">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white">
-                  <Bot className="w-5 h-5" />
+                <div 
+                  className="w-9 h-9 bg-accent text-white flex items-center justify-center border-2 border-foreground"
+                  style={{ borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px" }}
+                >
+                  <Bot className="w-5 h-5" strokeWidth={2.5} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">AI Co-Pilot</h3>
-                  <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold">GullyGuide Assistant</p>
+                  <h3 className="font-heading font-bold text-base text-foreground">AI Co-Pilot</h3>
+                  <p className="text-xs text-foreground/50 font-body">GullyGuide Assistant</p>
                 </div>
               </div>
               <button 
                 onClick={() => setIsOpen(false)}
-                className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full"
+                className="text-foreground/50 hover:text-accent transition-colors p-2 hover:bg-muted/50 border-2 border-transparent hover:border-foreground/20"
+                style={{ borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px" }}
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" strokeWidth={3} />
               </button>
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 notebook-lines">
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex gap-3 max-w-[85%] ${msg.role === "user" ? "ml-auto flex-row-reverse" : "mr-auto"}`}>
-                  <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-sm ${msg.role === "user" ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white" : "bg-primary text-white"}`}>
+                  <div 
+                    className={`w-8 h-8 flex-shrink-0 flex items-center justify-center text-sm border-2 border-foreground ${msg.role === "user" ? "bg-muted text-foreground" : "bg-accent text-white"}`}
+                    style={{ borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px" }}
+                  >
                     {msg.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                   </div>
-                  <div className={`p-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user" ? "bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 rounded-tr-sm" : "bg-teal-50 border border-teal-100 text-teal-900 dark:bg-teal-900/20 dark:border-teal-900/30 dark:text-teal-50 rounded-tl-sm"}`}>
+                  <div 
+                    className={`p-3 text-base font-body leading-relaxed border-2 border-foreground ${msg.role === "user" ? "bg-paper text-foreground" : "bg-postit text-foreground"}`}
+                    style={{ borderRadius: msg.role === "user" ? "225px 15px 255px 15px / 15px 255px 15px 225px" : "15px 225px 15px 255px / 255px 15px 225px 15px" }}
+                  >
                     {msg.content}
                     {msg.role === "assistant" && msg.content.includes("Paranthe") && (
-                      <button className="mt-3 w-full py-2 bg-white/50 dark:bg-black/20 border border-teal-200 dark:border-teal-800 rounded-xl text-teal-800 dark:text-teal-200 font-bold flex items-center justify-center gap-1 hover:bg-white dark:hover:bg-black/40 transition-colors">
+                      <button 
+                        className="mt-3 w-full py-2 bg-paper border-2 border-foreground text-foreground font-body font-bold flex items-center justify-center gap-1 hover:bg-muted transition-colors shadow-[2px_2px_0px_0px_#2d2d2d] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+                        style={{ borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px" }}
+                      >
                         <Plus className="w-4 h-4" /> Add to Itinerary
                       </button>
                     )}
                     {msg.role === "assistant" && msg.content.includes("budget") && (
-                      <button className="mt-3 w-full py-2 bg-white/50 dark:bg-black/20 border border-amber-200 dark:border-amber-800/50 rounded-xl text-amber-800 dark:text-amber-500 font-bold flex items-center justify-center gap-1 hover:bg-white dark:hover:bg-black/40 transition-colors">
+                      <button 
+                        className="mt-3 w-full py-2 bg-paper border-2 border-foreground text-foreground font-body font-bold flex items-center justify-center gap-1 hover:bg-muted transition-colors shadow-[2px_2px_0px_0px_#2d2d2d] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+                        style={{ borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px" }}
+                      >
                         <TrendingDown className="w-4 h-4" /> View full breakdown
                       </button>
                     )}
@@ -124,13 +142,19 @@ export default function CopilotWidget() {
               ))}
               {isTyping && (
                 <div className="flex gap-3 max-w-[85%] mr-auto">
-                  <div className="w-8 h-8 rounded-full flex-shrink-0 bg-primary text-white flex items-center justify-center">
+                  <div 
+                    className="w-8 h-8 flex-shrink-0 bg-accent text-white flex items-center justify-center border-2 border-foreground"
+                    style={{ borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px" }}
+                  >
                     <Bot className="w-4 h-4" />
                   </div>
-                  <div className="p-3 px-4 rounded-2xl bg-teal-50 border border-teal-100 text-teal-600 rounded-tl-sm flex gap-1 items-center">
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></span>
+                  <div 
+                    className="p-3 px-4 bg-postit border-2 border-foreground text-foreground flex gap-1.5 items-center"
+                    style={{ borderRadius: "15px 225px 15px 255px / 255px 15px 225px 15px" }}
+                  >
+                    <span className="w-2 h-2 bg-foreground rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                    <span className="w-2 h-2 bg-foreground rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                    <span className="w-2 h-2 bg-foreground rounded-full animate-bounce"></span>
                   </div>
                 </div>
               )}
@@ -144,7 +168,8 @@ export default function CopilotWidget() {
                     <button 
                       key={i}
                       onClick={() => setInput(prompt)}
-                      className="px-3 py-1.5 bg-zinc-50 border border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800 hover:border-primary/50 hover:text-primary dark:hover:border-primary/50 text-xs font-semibold rounded-lg text-zinc-600 dark:text-zinc-400 transition-colors"
+                      className="px-3 py-1.5 bg-paper border-2 border-foreground/30 hover:border-foreground text-sm font-body text-foreground transition-colors shadow-[2px_2px_0px_0px_rgba(45,45,45,0.1)] hover:shadow-[2px_2px_0px_0px_#2d2d2d]"
+                      style={{ borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px" }}
                     >
                       "{prompt}"
                     </button>
@@ -153,19 +178,22 @@ export default function CopilotWidget() {
             )}
 
             {/* Input Area */}
-            <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-              <form onSubmit={handleSend} className="relative flex items-center border border-zinc-200 dark:border-zinc-800 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/50 rounded-xl overflow-hidden bg-zinc-50 dark:bg-zinc-900 transition-all">
+            <div className="p-4 border-t-2 border-dashed border-foreground/30 bg-background">
+              <form onSubmit={handleSend} className="relative flex items-center border-2 border-foreground overflow-hidden bg-paper transition-all focus-within:border-secondary focus-within:shadow-[2px_2px_0px_0px_#2d5da1]"
+                style={{ borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px" }}
+              >
                 <input
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask about your trip..."
-                  className="w-full pl-4 pr-12 py-3.5 bg-transparent focus:outline-none text-sm dark:text-white"
+                  className="w-full pl-4 pr-12 py-3.5 bg-transparent focus:outline-none text-base font-body text-foreground placeholder:text-foreground/30"
                 />
                 <button 
                   type="submit"
                   disabled={!input.trim() || isTyping}
-                  className="absolute right-2 p-2 bg-primary text-white rounded-lg disabled:opacity-50 disabled:bg-zinc-300 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-600 transition-colors"
+                  className="absolute right-2 p-2 bg-accent text-white border-2 border-foreground disabled:opacity-30 disabled:bg-muted transition-colors"
+                  style={{ borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px" }}
                 >
                   <Send className="w-4 h-4" />
                 </button>

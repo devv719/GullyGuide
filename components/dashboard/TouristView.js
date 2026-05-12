@@ -2,223 +2,184 @@
 
 import { useTrips } from "@/hooks/useTrips";
 import { useRouter } from "next/navigation";
-import { MapPin, Compass, Navigation, Plane, Wallet, ArrowRight, Loader2, Sparkles, Map } from "lucide-react";
+import { MapPin, Compass, Navigation, Plane, Wallet, ArrowRight, Loader2, Sparkles, Map, Calendar as CalendarIcon, ChevronRight } from "lucide-react";
 import { useLocation } from "@/lib/LocationContext";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { motion, AnimatePresence } from "framer-motion";
+import { Calendar } from "@/components/ui/calendar";
+import { staggerContainer, cardRevealVariant } from "@/lib/animations";
+
+const WB = "255px 15px 225px 15px / 15px 225px 15px 255px";
+const WB2 = "15px 225px 15px 255px / 255px 15px 225px 15px";
 
 export default function TouristView({ user }) {
   const router = useRouter();
   const { role } = useAuth();
-  
-  // Route Protection
-  useEffect(() => {
-    if (role === 'guide') {
-       router.replace("/dashboard");
-    }
-  }, [role, router]);
+  const [date, setDate] = useState(new Date());
 
-  const { currentCity, requestLiveLocation, loadingLocation, locationPermission } = useLocation();
-  const { trips, loading, totalPlanned, totalSpent, totalBudget, upcomingTrips } = useTrips();
+  useEffect(() => { if (role === 'guide') router.replace("/dashboard"); }, [role, router]);
 
+  const { currentCity, requestLiveLocation, loadingLocation } = useLocation();
+  const { trips, loading, totalSpent, totalBudget, upcomingTrips } = useTrips();
   const remainingBudget = totalBudget - totalSpent;
   const isOverspent = remainingBudget < 0;
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-10">
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-2">
-        <div>
-          <h2 className="text-2xl lg:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
-            Welcome back, {user?.displayName?.split(" ")[0]}
-          </h2>
-          <div className="flex items-center gap-2 mt-2">
-            <span className="flex items-center gap-1.5 text-sm font-semibold text-zinc-500 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-1.5 rounded-full shadow-sm">
-               <MapPin className="w-4 h-4 text-[#534AB7]" />
-               Exploring {currentCity || "Mumbai"}
-            </span>
-            
-            {locationPermission !== "granted" && (
-                <button 
-                  onClick={requestLiveLocation} 
-                  disabled={loadingLocation}
-                  className="flex items-center gap-1.5 text-xs font-bold text-[#534AB7] hover:opacity-80 transition-opacity ml-2 disabled:opacity-50"
-                >
-                  {loadingLocation ? <Loader2 className="w-3 h-3 animate-spin"/> : <Navigation className="w-3 h-3"/>}
-                  Use live location
-                </button>
-            )}
+    <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="space-y-12 pb-10">
+
+      {/* HERO SECTION */}
+      <motion.div variants={cardRevealVariant} className="relative w-full overflow-hidden bg-paper border-[3px] border-foreground p-8 lg:p-12 flex flex-col md:flex-row items-center justify-between gap-10 min-h-[350px] shadow-sketch tape-decoration mt-3" style={{ borderRadius: WB2 }}>
+
+        <div className="relative z-10 md:w-1/2 flex flex-col items-start gap-6">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-postit text-foreground text-sm font-body border-2 border-foreground shadow-[2px_2px_0px_0px_#2d2d2d]" style={{ borderRadius: WB }}>
+            <MapPin className="w-3.5 h-3.5 text-accent" strokeWidth={3} /> Exploring {currentCity || "Mumbai"}
+          </span>
+
+          <h1 className="text-4xl lg:text-6xl font-heading font-bold text-foreground tracking-tight leading-[1.1]">
+            Plan your city <br/> <span className="text-accent">like a local.</span>
+          </h1>
+
+          <p className="text-lg font-body text-foreground/60 max-w-md mt-2">
+            Welcome back, {user?.displayName?.split(" ")[0] || "explorer"}. Connect with student guides and discover hidden spots.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-3 mt-4">
+            <button onClick={() => router.push("/dashboard/trips")}
+              className="px-6 py-3 bg-accent text-white font-body text-lg border-[3px] border-foreground shadow-sketch hover:shadow-sketch-hover hover:translate-x-[2px] hover:translate-y-[2px] transition-all active:shadow-none active:translate-x-[4px] active:translate-y-[4px] flex items-center gap-2"
+              style={{ borderRadius: WB }}>
+              Start Planning <ArrowRight className="w-4 h-4" />
+            </button>
+            <button onClick={requestLiveLocation} disabled={loadingLocation}
+              className="px-6 py-3 bg-paper text-foreground font-body text-lg border-[3px] border-foreground shadow-sketch hover:shadow-sketch-hover hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center gap-2 disabled:opacity-50"
+              style={{ borderRadius: WB2 }}>
+              {loadingLocation ? <Loader2 className="w-4 h-4 animate-spin"/> : <Navigation className="w-4 h-4 text-secondary" strokeWidth={3} />} Locate me
+            </button>
           </div>
         </div>
+
+        {/* Map placeholder — hand-drawn style */}
+        <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}
+          onClick={() => router.push("/dashboard/explore")}
+          className="cursor-pointer relative z-10 w-full md:w-1/2 aspect-[4/3] max-w-[400px] bg-muted/30 border-[3px] border-dashed border-foreground/30 overflow-hidden p-4 flex flex-col items-center justify-center group rotate-1"
+          style={{ borderRadius: WB }}>
+          <motion.div animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }} className="relative">
+            <Compass className="w-16 h-16 text-foreground/30 group-hover:text-accent transition-colors duration-300" strokeWidth={1.5} />
+          </motion.div>
+          <div className="mt-6 bg-paper border-2 border-foreground p-4 flex items-center justify-between gap-4 group-hover:shadow-sketch transition-all w-full" style={{ borderRadius: WB2 }}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-postit flex items-center justify-center border-2 border-foreground" style={{ borderRadius: WB }}>
+                <Map className="w-5 h-5 text-foreground" strokeWidth={2.5} />
+              </div>
+              <div>
+                <p className="text-sm font-heading font-bold text-foreground">Interactive Map</p>
+                <p className="text-xs font-body text-foreground/40">Discover nearby spots</p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-foreground/30 group-hover:text-foreground transition-colors" />
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* TWO COLUMN LAYOUT */}
+      <div className="grid lg:grid-cols-3 gap-8">
+        <motion.div variants={cardRevealVariant} className="lg:col-span-2 space-y-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-2xl font-heading font-bold text-foreground">Your Upcoming Trips</h3>
+            <Link href="/dashboard/trips" className="text-base font-body text-secondary hover:text-accent flex items-center gap-1 transition-colors">View all <ChevronRight className="w-4 h-4" /></Link>
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center items-center py-20 text-base font-body text-foreground/40">Syncing trips...</div>
+          ) : upcomingTrips.length === 0 ? (
+            <div className="w-full bg-paper border-2 border-dashed border-foreground/30 p-8 flex flex-col items-center justify-center text-center" style={{ borderRadius: WB }}>
+              <Plane className="w-8 h-8 text-foreground/30 mb-3" />
+              <h4 className="text-xl font-heading font-bold text-foreground">No trips planned yet</h4>
+              <p className="text-base font-body text-foreground/40 mt-1 mb-4">It's time to start an adventure.</p>
+              <button onClick={() => router.push("/dashboard/trips")} className="px-5 py-2 bg-foreground text-paper font-body text-base border-2 border-foreground shadow-[2px_2px_0px_0px_#ff4d4d] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all" style={{ borderRadius: WB }}>Create Trip</button>
+            </div>
+          ) : (
+            <div className="grid sm:grid-cols-2 gap-5">
+              <AnimatePresence>
+                {upcomingTrips.slice(0,4).map((trip, idx) => {
+                  const start = trip.startDate?.seconds ? new Date(trip.startDate.seconds * 1000).toLocaleDateString([],{month:'short', day:'numeric'}) : 'TBD';
+                  const end = trip.endDate?.seconds ? new Date(trip.endDate.seconds * 1000).toLocaleDateString([],{month:'short', day:'numeric'}) : 'TBD';
+                  const isPlanning = trip.status === "planning";
+                  return (
+                    <motion.div initial={{ opacity: 0, y: 20, rotate: -1 }} animate={{ opacity: 1, y: 0, rotate: 0 }} transition={{ delay: idx * 0.1 }}
+                      key={trip.id} className={`relative bg-paper border-2 border-foreground p-5 flex flex-col justify-between group cursor-pointer shadow-[3px_3px_0px_0px_rgba(45,45,45,0.1)] hover:shadow-sketch transition-all ${idx % 2 === 0 ? 'rotate-[0.5deg]' : '-rotate-[0.5deg]'} hover:rotate-0 tack-decoration mt-4`}
+                      style={{ borderRadius: idx % 2 === 0 ? WB : WB2 }}
+                      onClick={() => router.push(`/dashboard/trips/${trip.id}`)}>
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h4 className="font-heading font-bold text-lg text-foreground mb-1 group-hover:text-accent transition-colors">{trip.title}</h4>
+                          <span className="text-xs font-body text-foreground/40 bg-muted px-2 py-0.5 border border-foreground/20" style={{ borderRadius: WB }}>{trip.city}</span>
+                        </div>
+                        <div className={`px-2.5 py-1 border-2 text-xs font-body font-bold uppercase ${isPlanning ? 'border-secondary text-secondary bg-secondary/5' : 'border-accent text-accent bg-accent/5'}`} style={{ borderRadius: WB }}>{trip.status}</div>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm font-body text-foreground/40 mb-6"><CalendarIcon className="w-3.5 h-3.5" strokeWidth={3} /> {start} &ndash; {end}</div>
+                      <div className="mt-auto flex justify-between items-center pt-4 border-t-2 border-dashed border-foreground/15">
+                        <span className="text-sm font-body text-foreground/40">Budget: ₹{trip.totalBudget||0}</span>
+                        <div className="w-8 h-8 bg-foreground text-paper flex items-center justify-center group-hover:bg-accent transition-colors border-2 border-foreground" style={{ borderRadius: WB }}><ArrowRight className="w-3.5 h-3.5" /></div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+          )}
+        </motion.div>
+
+        {/* RIGHT COLUMN */}
+        <motion.div variants={cardRevealVariant} className="space-y-6">
+          <div className="bg-paper border-2 border-foreground p-6 shadow-[3px_3px_0px_0px_rgba(45,45,45,0.1)]" style={{ borderRadius: WB2 }}>
+            <h3 className="text-base font-heading font-bold text-foreground mb-4 flex items-center gap-2"><CalendarIcon className="w-4 h-4 text-accent" strokeWidth={3} /> Calendar</h3>
+            <div className="bg-background border-2 border-dashed border-foreground/20 p-2 flex justify-center w-full overflow-hidden" style={{ borderRadius: WB }}>
+              <Calendar mode="single" selected={date} onSelect={setDate} className="font-body" />
+            </div>
+          </div>
+
+          <div className="bg-paper border-2 border-foreground p-6 relative overflow-hidden shadow-[3px_3px_0px_0px_rgba(45,45,45,0.1)]" style={{ borderRadius: WB }}>
+            <div className="absolute -bottom-4 -right-4 p-4 opacity-5"><Wallet className="w-32 h-32" /></div>
+            <h3 className="text-sm font-heading font-bold text-foreground/60 mb-2 uppercase">Total Spendings</h3>
+            <p className="text-4xl font-heading font-bold text-foreground mb-1 tabular-nums">₹{loading ? "-" : totalSpent.toLocaleString("en-IN")}</p>
+            <p className="text-sm font-body text-foreground/40 mb-4">Across {loading ? "-" : trips.length} planned trips</p>
+            <div className="w-full bg-muted/30 h-3 overflow-hidden mt-6 border-2 border-foreground" style={{ borderRadius: WB }}>
+              <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(((totalSpent||0)/(totalBudget||1))*100, 100)}%` }} transition={{ duration: 1, delay: 0.5 }}
+                className={`h-full ${isOverspent ? 'bg-accent' : 'bg-secondary'}`} />
+            </div>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Aggregate Metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        <div className="bg-white dark:bg-zinc-950 rounded-2xl p-5 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
-          <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-widest mb-2 flex justify-between items-center">
-            Total planned <Plane className="w-4 h-4 text-[#534AB7]" />
-          </p>
-          <p className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-1.5">{loading ? "-" : totalPlanned}</p>
-          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-100 dark:bg-zinc-900 self-start px-2 py-0.5 rounded-md">
-            {loading ? "-" : `${trips.filter(t=>t.status==='active').length} active, ${trips.filter(t=>t.status==='planning').length} upcoming`}
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-zinc-950 rounded-2xl p-5 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
-          <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-widest mb-2 flex justify-between items-center">
-            Upcoming Bookings <Compass className="w-4 h-4 text-teal-600" />
-          </p>
-          <p className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-1.5">-</p>
-          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-100 dark:bg-zinc-900 self-start px-2 py-0.5 rounded-md">
-             0 pending approval
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-zinc-950 rounded-2xl p-5 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
-          <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-widest mb-2 flex justify-between items-center">
-            Total spent <Wallet className="w-4 h-4 text-amber-500" />
-          </p>
-          <p className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-1.5 tabular-nums">
-            ₹{loading ? "-" : totalSpent.toLocaleString("en-IN")}
-          </p>
-          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-100 dark:bg-zinc-900 self-start px-2 py-0.5 rounded-md">
-            across {loading ? "-" : trips.length} trips
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-zinc-950 rounded-2xl p-5 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
-          <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-widest mb-2 flex justify-between items-center">
-            Budget remaining <Map className="w-4 h-4 text-[#534AB7]" />
-          </p>
-          <p className={`text-3xl font-extrabold mb-1.5 tabular-nums ${isOverspent ? 'text-red-500' : 'text-[#1D9E75]'}`}>
-            ₹{loading ? "-" : Math.abs(remainingBudget).toLocaleString("en-IN")}
-          </p>
-          <p className={`text-[10px] font-bold uppercase tracking-widest self-start px-2 py-0.5 rounded-md ${isOverspent ? 'bg-red-50 text-red-600 dark:bg-red-500/10' : 'bg-green-50 text-green-600 dark:bg-green-500/10'}`}>
-            {isOverspent ? 'Over budget' : 'Under budget'}
-          </p>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="flex justify-center items-center py-20 text-sm font-medium text-zinc-400">Syncing trips...</div>
-      ) : upcomingTrips.length === 0 ? (
-        <div className="grid md:grid-cols-2 gap-6 pt-4">
-          <div 
-            onClick={() => router.push("/dashboard/trips")}
-            className="bg-[#534AB7] hover:bg-[#4a42a3] text-white rounded-2xl p-6 transition-all cursor-pointer flex flex-col justify-between h-48 active:scale-[0.98]"
-          >
-             <div className="flex justify-between items-start mb-2">
-               <span className="text-xs font-bold uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-md">
-                 Start Fresh
-               </span>
-             </div>
-             <div>
-               <h4 className="text-xl font-extrabold truncate mb-1">Plan a New Trip</h4>
-               <p className="text-[13px] font-medium opacity-80">Discover new destinations and itineraries.</p>
-               <div className="mt-4 w-9 h-9 bg-white/20 rounded-full flex justify-center items-center backdrop-blur-sm">
-                  <ArrowRight className="w-4 h-4 text-white" />
-               </div>
-             </div>
-          </div>
-
-          <div 
-            onClick={() => router.push("/dashboard/explore")}
-            className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-2xl p-6 transition-all cursor-pointer flex flex-col justify-between h-48 active:scale-[0.98]"
-          >
-             <div className="flex justify-between items-start mb-2">
-               <span className="text-xs font-bold uppercase tracking-widest opacity-60">
-                 Explore Local
-               </span>
-             </div>
-             <div>
-               <h4 className="text-xl font-extrabold mb-1">Experiences in {currentCity || "Mumbai"}</h4>
-               <p className="text-[13px] font-medium opacity-80">Connect with student guides in your city.</p>
-               <div className="mt-4 flex -space-x-2">
-                 <div className="w-8 h-8 rounded-full bg-white dark:bg-zinc-900 border-2 border-zinc-900 dark:border-zinc-100 flex items-center justify-center font-bold text-[10px] text-zinc-900 dark:text-white">RK</div>
-                 <div className="w-8 h-8 rounded-full bg-[#534AB7] border-2 border-zinc-900 dark:border-zinc-100 flex items-center justify-center font-bold text-[10px] text-white">AJ</div>
-               </div>
-             </div>
-          </div>
-        </div>
-      ) : (
-        <div className="pt-4">
-          <h3 className="text-sm font-bold text-zinc-900 dark:text-white mb-4">Upcoming trips</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingTrips.map(trip => {
-              const start = trip.startDate?.seconds ? new Date(trip.startDate.seconds * 1000).toLocaleDateString([],{month:'short', day:'numeric'}) : 'TBD';
-              const end = trip.endDate?.seconds ? new Date(trip.endDate.seconds * 1000).toLocaleDateString([],{month:'short', day:'numeric'}) : 'TBD';
-              
-              const isPlanning = trip.status === "planning";
-              const accentColor = isPlanning ? "bg-[#534AB7]" : "bg-[#0F6E56]";
-              const badgeClass = isPlanning ? "bg-[#534AB7]/10 text-[#534AB7]" : "bg-[#0F6E56]/10 text-[#0F6E56]";
-
-              const spendRatio = trip.totalBudget ? (trip.spentAmount||0) / trip.totalBudget : 0;
-              let budgetColor = "bg-green-500";
-              if (spendRatio >= 0.8 && spendRatio < 1) budgetColor = "bg-amber-500";
-              if (spendRatio >= 1) budgetColor = "bg-red-500";
-
-              return (
-                <div key={trip.id} className="relative bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden flex flex-col justify-between">
-                  {/* Left color bar */}
-                  <div className={`absolute left-0 top-0 bottom-0 w-1 ${accentColor}`}></div>
-                  
-                  <div className="p-5 pl-6">
-                    <div className="flex justify-between items-start mb-3">
-                       <div>
-                         <h4 className="font-bold text-[15px] text-zinc-900 dark:text-white mb-1.5">{trip.title}</h4>
-                         <span className="bg-zinc-100 dark:bg-zinc-900 text-zinc-500 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded shadow-sm">
-                           {trip.city}
-                         </span>
-                       </div>
-                       <div className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${badgeClass}`}>
-                         {trip.status}
-                       </div>
-                    </div>
-                    
-                    <p className="text-xs font-semibold text-zinc-400 mb-5">{start} &ndash; {end}</p>
-
-                    <div className="space-y-4">
-                       <div>
-                         <div className="flex justify-between text-[11px] font-bold text-zinc-500 mb-1">
-                           <span>Progress</span>
-                           <span>{trip.days?.length ? `Day 1 of ${trip.days.length}` : 'Planning'}</span>
-                         </div>
-                         <div className="w-full bg-zinc-100 dark:bg-zinc-900 h-1.5 rounded-full overflow-hidden">
-                           <div className={`${accentColor} h-full`} style={{ width: "20%" }}></div>
-                         </div>
-                       </div>
-                       <div>
-                         <div className="flex justify-between text-[11px] font-bold text-zinc-500 mb-1">
-                           <span>Budget</span>
-                           <span>₹{trip.spentAmount||0} of ₹{trip.totalBudget||0}</span>
-                         </div>
-                         <div className="w-full bg-zinc-100 dark:bg-zinc-900 h-1.5 rounded-full overflow-hidden">
-                           <div className={`${budgetColor} h-full`} style={{ width: `${Math.min(spendRatio * 100, 100)}%` }}></div>
-                         </div>
-                       </div>
-                    </div>
-                  </div>
-
-                  <div className="px-6 py-3 border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/10">
-                    <Link href={`/dashboard/trips/${trip.id}`} className="text-xs font-bold text-[#534AB7] hover:underline flex items-center justify-between w-full">
-                       View itinerary <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
+      {/* CURATED EXPERIENCES */}
+      <motion.div variants={cardRevealVariant} className="pt-8">
+        <h3 className="text-2xl font-heading font-bold text-foreground mb-4">Curated Experiences</h3>
+        <div className="flex gap-4 overflow-x-auto pb-6 snap-x no-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0">
+          {[{title: "Hidden Culinary Walk", desc: "Discover best street food spots verified by locals.", by: "RK"},
+            {title: "Midnight Heritage Tour", desc: "See the historical monuments under the moonlight.", by: "AS"},
+            {title: "Artisan Shopping Trail", desc: "Bargain at local markets for authentic souvenirs.", by: "MD"},
+            {title: "Silent Sunset Hike", desc: "Hidden trails that tourists never know about.", by: "VJ"}
+          ].map((item, idx) => (
+            <div key={idx} className={`min-w-[260px] bg-paper border-2 border-foreground p-6 snap-start shrink-0 group cursor-pointer shadow-[3px_3px_0px_0px_rgba(45,45,45,0.1)] hover:shadow-sketch hover:-rotate-1 transition-all tape-decoration mt-3 ${idx % 2 === 0 ? 'rotate-[0.5deg]' : '-rotate-[0.5deg]'}`}
+              style={{ borderRadius: idx % 2 === 0 ? WB : WB2 }}>
+              <div className="w-12 h-12 bg-postit border-2 border-foreground mb-5 flex items-center justify-center group-hover:rotate-12 transition-transform shadow-[2px_2px_0px_0px_#2d2d2d]" style={{ borderRadius: WB }}>
+                <Compass className="w-5 h-5 text-foreground" strokeWidth={2.5} />
+              </div>
+              <h4 className="font-heading font-bold text-foreground mb-2 group-hover:text-accent transition-colors text-lg">{item.title}</h4>
+              <p className="text-sm font-body text-foreground/50 mb-6 leading-relaxed">{item.desc}</p>
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-3">
+                  <div className="w-7 h-7 bg-muted border-2 border-foreground flex items-center justify-center font-body text-xs text-foreground" style={{ borderRadius: WB }}>{item.by}</div>
+                  <div className="w-7 h-7 bg-accent text-white border-2 border-foreground flex items-center justify-center font-body text-xs" style={{ borderRadius: WB }}>AJ</div>
                 </div>
-              );
-            })}
-          </div>
+                <span className="text-xs font-body text-foreground/40 uppercase">Local guides</span>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
-      
-      {/* AI FAB Placeholder */}
-      <button className="fixed bottom-6 right-6 w-14 h-14 bg-[#534AB7] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform z-50">
-         <Sparkles className="w-6 h-6" />
-      </button>
-
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
